@@ -1,0 +1,40 @@
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+mainClassName = 'main'
+
+repositories {
+    mavenCentral()
+}
+
+task install(type: Copy) {
+    group "Installation"
+    description "Install dictionaries"
+    def zipFile = file('dict/dictionaries.zip')
+    def outputDir = file('dict/')
+    from zipTree(zipFile)
+    into outputDir
+}
+
+run.dependsOn install
+
+task itest(type: Exec) {
+    group "Verification"
+    description "Run integration tests"
+    commandLine "itest/test.sh"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+test {
+    useJUnitPlatform()
+}
